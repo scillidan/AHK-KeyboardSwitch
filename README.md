@@ -1,8 +1,14 @@
+<div align="center">
+  <img src="assets/icon.png" alt="icon" width="64" />
+</div>
+
 # Keyboard Switch
 
 Switch between two keyboard. Base on https://github.com/xmdn/2_of_3_lang_switch_hotkey.
 
 Authors: GLM-5🧙‍♂️, scillidan🤡.
+
+Icon picture is form [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animated-pixel-keyboard-keys) by [beamedeighth](https://beamedeighth.itch.io/).
 
 ## Usage:
 
