@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/icon.png" alt="icon" width="64" />
+  <img src="assets/icon.png" alt="icon" width="32" />
 </div>
 
 # Keyboard Switch
