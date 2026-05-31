@@ -1,17 +1,8 @@
-; Switch between two keyboard.
-; Inspired by https://github.com/xmdn/2_of_3_lang_switch_hotkey
-; Usage (For example):
-; 1. Windows 10 → Advanced keyboard settings → Input language hot keys → Advanced key settings
-; 1.1 Set Alt+Shift+0 to switch to English
-; 1.2 Set Alt+Shift+1 to switch to Chinese
-; 2. autohotkeyu64.exe script.ahk
-; 3. Type <Caps_Lock> to switch keyboard
-
 scriptDir := A_ScriptDir
-iniPath := scriptDir . "\keyboard_switch.ini"
+iniPath := scriptDir . "\KeyboardSwitch.ini"
 
 if (!FileExist(iniPath)) {
-    MsgBox, 0x10, Error, Configuration file not found:`n%iniPath%`n`nPlease ensure keyboard_switch.ini exists in the same folder.
+    MsgBox, 0x10, Error, Configuration file not found:`n%iniPath%`n`nPlease ensure KeyboardSwitch.ini exists in the same folder.
     ExitApp
 }
 
@@ -22,7 +13,7 @@ IniRead, shortcut1, %iniPath%, Shortcuts, Shortcut1, 0
 IniRead, shortcut2, %iniPath%, Shortcuts, Shortcut2, 1
 
 startupDir := A_StartMenu . "\Programs\Startup"
-shortcutPath := startupDir . "\keyboard_switch.lnk"
+shortcutPath := startupDir . "\Keyboard Switch.lnk"
 isStartup := FileExist(shortcutPath)
 
 Menu, Tray, NoStandard
