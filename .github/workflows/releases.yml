@@ -22,6 +22,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install p7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full
+
       - name: Install AutoHotkey v1
         run: |
           choco install autohotkey_l.install -y
@@ -34,8 +39,11 @@ jobs:
             /icon "assets/icon.ico" `
             /out "KeyboardSwitch.exe"
 
+      - name: ZIP
+        run: 7z a -tzip KeyboardSwitch.zip KeyboardSwitch.exe KeyboardSwitch.ini
+
       - name: Generate SHA256 checksums
-        run: sha256sum KeyboardSwitch.exe > KeyboardSwitch.exe.sha256
+        run: sha256sum KeyboardSwitch.zip > KeyboardSwitch.exe.sha256
 
       - name: Release
         uses: softprops/action-gh-release@v3
@@ -43,4 +51,4 @@ jobs:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
           name: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
           files: |
-            KeyboardSwitch.exe
+            KeyboardSwitch.zip
