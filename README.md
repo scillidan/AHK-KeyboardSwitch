@@ -8,9 +8,9 @@ Switch between two keyboard. Inspired by https://github.com/xmdn/2_of_3_lang_swi
 
 Authors: GLM-5🧙‍♂️, scillidan🤡.
 
-Icon picture is form [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animated-pixel-keyboard-keys) by [beamedeighth](https://beamedeighth.itch.io/).
+The icon is from [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animated-pixel-keyboard-keys) by [beamedeighth](https://beamedeighth.itch.io/).
 
-## Usage:
+## Usage
 
 1. Windows 10 → Advanced keyboard settings → Input language hot keys → Advanced key settings
 	1. For example, Set `Alt_Rt+Shift+1` to switch to English
