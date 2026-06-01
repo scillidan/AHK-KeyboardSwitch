@@ -13,7 +13,7 @@ Icon picture is form [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animat
 ## Usage:
 
 1. Windows 10 → Advanced keyboard settings → Input language hot keys → Advanced key settings
-	1. For example, Set `Alt+Shift+0` to switch to English
-	2. Set `Alt+Shift+1` to switch to Chinese
+	1. For example, Set `Alt_Rt+Shift+1` to switch to English
+	2. Set `Alt_Rt+Shift+2` to switch to Chinese
 2. `autohotkeyu64.exe KeyboardSwitch.ahk`
 3. Type `Caps_Lock` to switch keyboard

@@ -10,8 +10,8 @@ if (!FileExist(iniPath)) {
 IniRead, layout1, %iniPath%, Layouts, Layout1, 00000409
 IniRead, layout2, %iniPath%, Layouts, Layout2, 00000804
 IniRead, switchKey, %iniPath%, Hotkey, SwitchKey, CapsLock
-IniRead, shortcut1, %iniPath%, Shortcuts, Shortcut1, 0
-IniRead, shortcut2, %iniPath%, Shortcuts, Shortcut2, 1
+IniRead, shortcut1, %iniPath%, Shortcuts, Shortcut1, 1
+IniRead, shortcut2, %iniPath%, Shortcuts, Shortcut2, 2
 
 startupDir := A_StartMenu . "\Programs\Startup"
 shortcutPath := startupDir . "\Keyboard Switch.lnk"
