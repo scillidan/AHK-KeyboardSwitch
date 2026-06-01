@@ -4,7 +4,7 @@
 
 # Keyboard Switch
 
-Switch between two keyboard. Base on https://github.com/xmdn/2_of_3_lang_switch_hotkey.
+Switch between two keyboard. Inspired by https://github.com/xmdn/2_of_3_lang_switch_hotkey.
 
 Authors: GLM-5🧙‍♂️, scillidan🤡.
 
