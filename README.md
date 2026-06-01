@@ -16,4 +16,4 @@ Icon picture is form [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animat
 	1. For example, Set `Alt_Rt+Shift+1` to switch to English
 	2. Set `Alt_Rt+Shift+2` to switch to Chinese
 2. `autohotkeyu64.exe KeyboardSwitch.ahk`
-3. Type `Caps_Lock` to switch keyboard
+3. Type `Esc` or `Caps_Lock` to switch keyboard
