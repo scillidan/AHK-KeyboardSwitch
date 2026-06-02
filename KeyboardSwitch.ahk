@@ -7,12 +7,34 @@ if (!FileExist(iniPath)) {
     ExitApp
 }
 
-IniRead, layout1, %iniPath%, Layouts, Layout1, 00000409
-IniRead, layout2, %iniPath%, Layouts, Layout2, 00000804
+global switchMode, layouts, shortcuts, layoutCount
+global swapEscCaps, notifyOnSwitch
+
+IniRead, switchMode, %iniPath%, Settings, SwitchMode, InDefine
 IniRead, swapEscCaps, %iniPath%, Hotkey, SwapEscCapsLock, 0
 IniRead, notifyOnSwitch, %iniPath%, Hotkey, NotifyOnSwitch, 1
-IniRead, shortcut1, %iniPath%, Shortcuts, Shortcut1, 1
-IniRead, shortcut2, %iniPath%, Shortcuts, Shortcut2, 2
+
+layouts := []
+shortcuts := []
+layoutCount := 0
+
+if (switchMode = "InDefine") {
+    Loop {
+        IniRead, layout, %iniPath%, Layouts, Layout%A_Index%
+        if (layout = "ERROR") {
+            break
+        }
+        layouts.Push(layout)
+        IniRead, shortcut, %iniPath%, Shortcuts, Shortcut%A_Index%, %A_Index%
+        shortcuts.Push(shortcut)
+        layoutCount++
+    }
+    if (layoutCount = 0) {
+        layouts := ["00000409", "00000804"]
+        shortcuts := ["1", "2"]
+        layoutCount := 2
+    }
+}
 
 startupDir := A_StartMenu . "\Programs\Startup"
 shortcutPath := startupDir . "\Keyboard Switch.lnk"
@@ -20,13 +42,6 @@ isStartup := FileExist(shortcutPath)
 
 Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
-
-if (isStartup) {
-    Menu, Tray, Add, Start with Windows, ToggleStartup
-    Menu, Tray, Check, Start with Windows
-} else {
-    Menu, Tray, Add, Start with Windows, ToggleStartup
-}
 
 Menu, Tray, Add, Swap ESC/CapsLock, ToggleSwapEscCaps
 if (swapEscCaps) {
@@ -38,6 +53,16 @@ if (notifyOnSwitch) {
     Menu, Tray, Check, Notify on Switch
 }
 
+if (isStartup) {
+    Menu, Tray, Add, Start with Windows, ToggleStartup
+    Menu, Tray, Check, Start with Windows
+} else {
+    Menu, Tray, Add, Start with Windows, ToggleStartup
+}
+
+Menu, Tray, Add
+Menu, Tray, Add, Mode: %switchMode%, ShowSwitchMode
+Menu, Tray, Disable, Mode: %switchMode%
 Menu, Tray, Add, Suspend Hotkeys, SuspendHotkeys
 Menu, Tray, Add, Pause Script, PauseScript
 Menu, Tray, Add, Exit, ExitScript
@@ -104,6 +129,9 @@ ToggleStartup:
     }
 return
 
+ShowSwitchMode:
+return
+
 SuspendHotkeys:
     Suspend, Toggle
     if (A_IsSuspended) {
@@ -128,24 +156,42 @@ return
 
 
 UpdateTrayTip:
-    global swapEscCaps, layout1, layout2
-    name1 := GetLayoutName(layout1)
-    name2 := GetLayoutName(layout2)
+    global swapEscCaps, switchMode, layouts, layoutCount
+
     currentLayout := GetKeyboardLayout()
+    tip := "Keyboard Switch"
 
     if (swapEscCaps) {
-        tip := "Keyboard Switch`nHotkey: ESC (CapsLock->ESC)"
+        tip .= "`nHotkey: ESC (CapsLock->ESC)"
     } else {
-        tip := "Keyboard Switch`nHotkey: CapsLock"
+        tip .= "`nHotkey: CapsLock"
     }
 
-    if (currentLayout = layout1) {
-        tip .= "`n> " . name1 . "`n  " . name2
-    } else if (currentLayout = layout2) {
-        tip .= "`n  " . name1 . "`n> " . name2
-    } else {
-        tip .= "`n  " . name1 . "`n  " . name2
+    tip .= "`nMode: " . switchMode
+
+    if (switchMode = "InDefine") {
+        tip .= "`nDefined layouts:"
+        for idx, layout in layouts {
+            n := GetLayoutName(layout)
+            if (layout = currentLayout) {
+                tip .= "`n> " . n
+            } else {
+                tip .= "`n  " . n
+            }
+        }
+    } else if (switchMode = "InAll") {
+        installedLayouts := GetInstalledLayouts()
+        tip .= "`nInstalled layouts:"
+        for idx, layout in installedLayouts {
+            n := GetLayoutName(layout)
+            if (layout = currentLayout) {
+                tip .= "`n> " . n
+            } else {
+                tip .= "`n  " . n
+            }
+        }
     }
+
     Menu, Tray, Tip, %tip%
 return
 
@@ -182,20 +228,38 @@ return
 
 
 SetKeyboardLayoutShortcut(shortcut) {
-    global shortcut1, shortcut2
     SendInput, {Alt down}{Shift down}%shortcut%{Shift up}{Alt up}
 }
 
 SwitchLayout:
-    global layout1, layout2, shortcut1, shortcut2
+    global switchMode, layouts, shortcuts, layoutCount
+
     currentLayout := GetKeyboardLayout()
 
-    if (currentLayout = layout1) {
-        SetKeyboardLayoutShortcut(shortcut2)
-    } else if (currentLayout = layout2) {
-        SetKeyboardLayoutShortcut(shortcut1)
+    if (switchMode = "InDefine") {
+        idx := 0
+        for i, layout in layouts {
+            if (layout = currentLayout) {
+                idx := i
+                break
+            }
+        }
+        nextIdx := Mod(idx, layoutCount) + 1
+        SetKeyboardLayoutShortcut(shortcuts[nextIdx])
+    } else if (switchMode = "InAll") {
+        installedLayouts := GetInstalledLayouts()
+        foundIdx := 0
+        for i, layout in installedLayouts {
+            if (layout = currentLayout) {
+                foundIdx := i
+                break
+            }
+        }
+        nextIdx := Mod(foundIdx, installedLayouts.MaxIndex()) + 1
+        nextLayout := installedLayouts[nextIdx]
+        SwitchToLayout(nextLayout)
     } else {
-        SetKeyboardLayoutShortcut(shortcut1)
+        SetKeyboardLayoutShortcut("1")
     }
 
     SetTimer, ShowSwitchTip, -80
@@ -216,4 +280,31 @@ GetLayoutName(klid) {
         return klid
     }
     return name
+}
+
+GetInstalledLayouts() {
+    static installedLayouts := ""
+    if (installedLayouts != "") {
+        return installedLayouts
+    }
+
+    VarSetCapacity(hklList, 1024, 0)
+    count := DllCall("GetKeyboardLayoutList", "Int", 0, "Ptr", 0)
+    VarSetCapacity(hklList, count * A_PtrSize, 0)
+    DllCall("GetKeyboardLayoutList", "Int", count, "Ptr", &hklList)
+
+    installedLayouts := []
+    Loop, %count% {
+        hkl := NumGet(hklList, (A_Index - 1) * A_PtrSize, "Ptr")
+        klid := Format("{:08x}", hkl & 0xFFFF)
+        installedLayouts.Push(klid)
+    }
+    return installedLayouts
+}
+
+SwitchToLayout(targetKlid) {
+    static WM_INPUTLANGCHANGEREQUEST := 0x0050
+    hwnd := WinExist("A")
+    targetKlidNum := "0x" . targetKlid
+    PostMessage, WM_INPUTLANGCHANGEREQUEST, 0, %targetKlidNum%, , ahk_id %hwnd%
 }
