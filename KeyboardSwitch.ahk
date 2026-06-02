@@ -9,7 +9,7 @@ if (!FileExist(iniPath)) {
 
 IniRead, layout1, %iniPath%, Layouts, Layout1, 00000409
 IniRead, layout2, %iniPath%, Layouts, Layout2, 00000804
-IniRead, swapEscCaps, %iniPath%, Hotkey, SwapEscCapsLock, 1
+IniRead, swapEscCaps, %iniPath%, Hotkey, SwapEscCapsLock, 0
 IniRead, notifyOnSwitch, %iniPath%, Hotkey, NotifyOnSwitch, 1
 IniRead, shortcut1, %iniPath%, Shortcuts, Shortcut1, 1
 IniRead, shortcut2, %iniPath%, Shortcuts, Shortcut2, 2
