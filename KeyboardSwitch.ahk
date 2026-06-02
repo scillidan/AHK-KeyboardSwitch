@@ -8,9 +8,10 @@ if (!FileExist(iniPath)) {
 }
 
 global switchMode, layouts, shortcuts, layoutCount
-global swapEscCaps, notifyOnSwitch
+global swapEscCaps, notifyOnSwitch, switchHotkey
 
-IniRead, switchMode, %iniPath%, Settings, SwitchMode, InDefine
+IniRead, switchMode, %iniPath%, Settings, SwitchMode, InAll
+IniRead, switchHotkey, %iniPath%, Hotkey, SwitchHotkey, CapsLock
 IniRead, swapEscCaps, %iniPath%, Hotkey, SwapEscCapsLock, 0
 IniRead, notifyOnSwitch, %iniPath%, Hotkey, NotifyOnSwitch, 1
 
@@ -48,6 +49,14 @@ if (swapEscCaps) {
     Menu, Tray, Check, Swap ESC/CapsLock
 }
 
+if (switchMode = "InDefine") {
+    Menu, Tray, Add, Mode: InDefine (click to toggle), ToggleSwitchMode
+    Menu, Tray, Check, Mode: InDefine (click to toggle)
+} else {
+    Menu, Tray, Add, Mode: InAll (click to toggle), ToggleSwitchMode
+    Menu, Tray, Check, Mode: InAll (click to toggle)
+}
+
 Menu, Tray, Add, Notify on Switch, ToggleNotify
 if (notifyOnSwitch) {
     Menu, Tray, Check, Notify on Switch
@@ -61,8 +70,6 @@ if (isStartup) {
 }
 
 Menu, Tray, Add
-Menu, Tray, Add, Mode: %switchMode%, ShowSwitchMode
-Menu, Tray, Disable, Mode: %switchMode%
 Menu, Tray, Add, Suspend Hotkeys, SuspendHotkeys
 Menu, Tray, Add, Pause Script, PauseScript
 Menu, Tray, Add, Exit, ExitScript
@@ -70,23 +77,32 @@ Menu, Tray, Add, Exit, ExitScript
 Gosub, UpdateTrayTip
 Menu, Tray, Icon, %trayIcon%
 
- $*CapsLock::
-    global swapEscCaps
-    if (swapEscCaps) {
+SetupHotkeys()
+
+SetupHotkeys() {
+    global switchHotkey, swapEscCaps
+    Hotkey, $*%switchHotkey%, HotkeySwitch
+    if (switchHotkey = "CapsLock") {
+        Hotkey, $*Esc, HotkeyEsc
+    }
+}
+
+HotkeySwitch:
+    global swapEscCaps, switchHotkey
+    if (swapEscCaps && switchHotkey = "CapsLock") {
         Send {Blind}{Esc}
     } else {
         Gosub, SwitchLayout
     }
 return
 
- $*Esc::
+HotkeyEsc:
     global swapEscCaps
     if (swapEscCaps) {
         Gosub, SwitchLayout
     } else {
         Send {Blind}{Esc}
     }
-return
 return
 
 
@@ -99,6 +115,19 @@ ToggleSwapEscCaps:
         Menu, Tray, Uncheck, Swap ESC/CapsLock
     }
     IniWrite, %swapEscCaps%, %iniPath%, Hotkey, SwapEscCapsLock
+    Gosub, UpdateTrayTip
+return
+
+ToggleSwitchMode:
+    global switchMode, iniPath
+    if (switchMode = "InDefine") {
+        switchMode := "InAll"
+        Menu, Tray, Rename, Mode: InDefine (click to toggle), Mode: InAll (click to toggle)
+    } else {
+        switchMode := "InDefine"
+        Menu, Tray, Rename, Mode: InAll (click to toggle), Mode: InDefine (click to toggle)
+    }
+    IniWrite, %switchMode%, %iniPath%, Settings, SwitchMode
     Gosub, UpdateTrayTip
 return
 
@@ -129,9 +158,6 @@ ToggleStartup:
     }
 return
 
-ShowSwitchMode:
-return
-
 SuspendHotkeys:
     Suspend, Toggle
     if (A_IsSuspended) {
@@ -156,15 +182,15 @@ return
 
 
 UpdateTrayTip:
-    global swapEscCaps, switchMode, layouts, layoutCount
+    global swapEscCaps, switchMode, layouts, layoutCount, switchHotkey
 
     currentLayout := GetKeyboardLayout()
     tip := "Keyboard Switch"
 
-    if (swapEscCaps) {
-        tip .= "`nHotkey: ESC (CapsLock->ESC)"
+    if (swapEscCaps && switchHotkey = "CapsLock") {
+        tip .= "`nHotkey: ESC (" . switchHotkey . "->ESC)"
     } else {
-        tip .= "`nHotkey: CapsLock"
+        tip .= "`nHotkey: " . switchHotkey
     }
 
     tip .= "`nMode: " . switchMode
