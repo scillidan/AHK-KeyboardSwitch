@@ -39,7 +39,7 @@ jobs:
             /out "KeyboardSwitch.exe"
 
       - name: ZIP
-        run: 7z a -tzip KeyboardSwitch.zip KeyboardSwitch.exe KeyboardSwitch.ini assets/icon.ico
+        run: 7z a -tzip KeyboardSwitch.zip KeyboardSwitch.exe KeyboardSwitch.ini assets/icon.ico LICENSE
 
       - name: Generate SHA256 checksums
         run: sha256sum KeyboardSwitch.zip > KeyboardSwitch.exe.sha256
