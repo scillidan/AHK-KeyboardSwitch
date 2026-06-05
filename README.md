@@ -6,7 +6,7 @@
 
 Switch between keyboard layouts. Inspired by https://github.com/xmdn/2_of_3_lang_switch_hotkey.
 
-Authors: GLM-5🧙‍♂️, scillidan🤡.
+Authors: GLM-5🧙‍♂️, scillidan🤡
 
 The icon is from [SimpleKeys](https://beamedeighth.itch.io/simplekeys-animated-pixel-keyboard-keys) by [beamedeighth](https://beamedeighth.itch.io/).
 
