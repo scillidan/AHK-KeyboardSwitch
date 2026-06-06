@@ -43,12 +43,10 @@ isStartup := FileExist(shortcutPath)
 
 Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
-
 Menu, Tray, Add, Swap ESC/CapsLock, ToggleSwapEscCaps
 if (swapEscCaps) {
     Menu, Tray, Check, Swap ESC/CapsLock
 }
-
 if (switchMode = "InDefine") {
     Menu, Tray, Add, Mode: InDefine (click to toggle), ToggleSwitchMode
     Menu, Tray, Check, Mode: InDefine (click to toggle)
@@ -56,22 +54,19 @@ if (switchMode = "InDefine") {
     Menu, Tray, Add, Mode: InAll (click to toggle), ToggleSwitchMode
     Menu, Tray, Check, Mode: InAll (click to toggle)
 }
-
 Menu, Tray, Add, Notify on Switch, ToggleNotify
 if (notifyOnSwitch) {
     Menu, Tray, Check, Notify on Switch
 }
-
+Menu, Tray, Add
 if (isStartup) {
     Menu, Tray, Add, Start with Windows, ToggleStartup
     Menu, Tray, Check, Start with Windows
 } else {
     Menu, Tray, Add, Start with Windows, ToggleStartup
 }
-
-Menu, Tray, Add
-Menu, Tray, Add, Suspend Hotkeys, SuspendHotkeys
-Menu, Tray, Add, Pause Script, PauseScript
+Menu, Tray, Add, Edit Config, EditConfig
+Menu, Tray, Add, Reload, ReloadApp
 Menu, Tray, Add, Exit, ExitScript
 
 Gosub, UpdateTrayTip
@@ -174,6 +169,19 @@ PauseScript:
     } else {
         Menu, Tray, Uncheck, Pause Script
     }
+return
+
+EditConfig:
+    Run, edit "%iniPath%"
+return
+
+ReloadApp:
+    TrayTip, Keyboard Switch, Config reloaded, 2, 1
+    SetTimer, DoReload, -500
+return
+
+DoReload:
+    Reload
 return
 
 ExitScript:
