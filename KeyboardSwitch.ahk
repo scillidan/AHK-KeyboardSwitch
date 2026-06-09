@@ -53,11 +53,11 @@ if (swapEscCaps) {
     Menu, Tray, Check, Swap ESC/CapsLock
 }
 if (switchMode = "InDefine") {
-    Menu, Tray, Add, Mode: InDefine (click to toggle), ToggleSwitchMode
-    Menu, Tray, Check, Mode: InDefine (click to toggle)
+    Menu, Tray, Add, Switch Mode: InDefine (click to toggle), ToggleSwitchMode
+    Menu, Tray, Check, Switch Mode: InDefine (click to toggle)
 } else {
-    Menu, Tray, Add, Mode: InAll (click to toggle), ToggleSwitchMode
-    Menu, Tray, Check, Mode: InAll (click to toggle)
+    Menu, Tray, Add, Switch Mode: InAll (click to toggle), ToggleSwitchMode
+    Menu, Tray, Check, Switch Mode: InAll (click to toggle)
 }
 Menu, Tray, Add, Notify on Switch, ToggleNotify
 if (notifyOnSwitch) {
@@ -122,10 +122,10 @@ ToggleSwitchMode:
     global switchMode, iniPath
     if (switchMode = "InDefine") {
         switchMode := "InAll"
-        Menu, Tray, Rename, Mode: InDefine (click to toggle), Mode: InAll (click to toggle)
+        Menu, Tray, Rename, Switch Mode: InDefine (click to toggle), Switch Mode: InAll (click to toggle)
     } else {
         switchMode := "InDefine"
-        Menu, Tray, Rename, Mode: InAll (click to toggle), Mode: InDefine (click to toggle)
+        Menu, Tray, Rename, Switch Mode: InAll (click to toggle), Switch Mode: InDefine (click to toggle)
     }
     IniWrite, %switchMode%, %iniPath%, Settings, SwitchMode
     Gosub, UpdateTrayTip
@@ -184,12 +184,10 @@ UpdateTrayTip:
     tip := "Keyboard Switch"
 
     if (swapEscCaps && switchHotkey = "CapsLock") {
-        tip .= "`nHotkey: ESC (" . switchHotkey . "->ESC)"
+        tip .= "`nSwitch Hotkey: ESC (" . switchHotkey . "->ESC)"
     } else {
-        tip .= "`nHotkey: " . switchHotkey
+        tip .= "`nSwitch Hotkey: " . switchHotkey
     }
-
-    tip .= "`nMode: " . switchMode
 
     if (switchMode = "InDefine") {
         tip .= "`nDefined layouts:"
