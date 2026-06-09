@@ -15,6 +15,11 @@ IniRead, switchHotkey, %iniPath%, Hotkey, SwitchHotkey, CapsLock
 IniRead, swapEscCaps, %iniPath%, Hotkey, SwapEscCapsLock, 0
 IniRead, notifyOnSwitch, %iniPath%, Hotkey, NotifyOnSwitch, 1
 
+EnvGet, envEditor, EDITOR
+IniRead, scriptEditor, %iniPath%, AutoHotkey, ScriptEditor, __MISSING__
+if (scriptEditor = "__MISSING__" || scriptEditor = "")
+    scriptEditor := envEditor != "" ? envEditor : "notepad"
+
 layouts := []
 shortcuts := []
 layoutCount := 0
@@ -154,7 +159,8 @@ ToggleStartup:
 return
 
 EditConfig:
-    Run, edit "%iniPath%"
+    global scriptEditor, iniPath
+    Run, %scriptEditor% "%iniPath%"
 return
 
 ReloadApp:
