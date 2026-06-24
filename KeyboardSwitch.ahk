@@ -169,6 +169,7 @@ ReloadApp:
 return
 
 DoReload:
+    SetCapsLockState, Off
     Reload
 return
 
